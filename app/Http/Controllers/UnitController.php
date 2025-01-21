@@ -36,8 +36,7 @@ class UnitController extends BaseController
         $unit = Unit::where('name', $validatedData['title'])->first();
 
         if ($unit) {
-            // Error Unit already exists
-
+            return back()->with('error', 'Unit already exists!');
         }
         else {
             $unitData = [
@@ -46,6 +45,8 @@ class UnitController extends BaseController
 
             $unit = Unit::create($unitData);
         }
+
+        return redirect()->route('units')->with('success', 'Unit created successfully!');
 
     }
 
@@ -60,8 +61,25 @@ class UnitController extends BaseController
             'title' => 'required|string|max:255',
         ]);
 
-        $unit->update($validatedData);
+        $existingunit = Unit::where('name', $validatedData['title'])->first();
 
-        return redirect()->route('units')->('success', 'Unit updated successfully!');
+        if ($existingunit) {
+            return back()->with('error', 'Unit already exists!');
+        }
+        else {
+            $unitData = [
+                'name' => $validatedData['title'],
+            ];
+            $unit->update($unitData);
+        }
+
+        return redirect()->route('units')->with('success', 'Unit updated successfully!');
+    }
+
+    public function destroy(Unit $unit)
+    {
+        $unit->delete();
+
+        return redirect()->route('units')->with('success', 'Unit deleted successfully!');
     }
 }
