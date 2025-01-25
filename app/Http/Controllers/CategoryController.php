@@ -16,18 +16,8 @@ class CategoryController extends BaseController
         return view('portal.categories', $data);
     }
 
-    public function store()
-    {
-        $categories = Category::all();
 
-        return view('portal.createCategories', [
-            'categories' => $categories,
-        ]);
-
-        return view('portal.createCategories', $data);
-    }
-
-    public function createCategory(Request $request)
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
