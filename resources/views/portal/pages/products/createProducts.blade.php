@@ -20,7 +20,14 @@
                     </div>
                 @endif
 
-                <form action="{{ route('createProduct') }}" method="POST" enctype="multipart/form-data">
+                <!-- Success Message -->
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('storeProduct') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">

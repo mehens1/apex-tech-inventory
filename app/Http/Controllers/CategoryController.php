@@ -13,7 +13,12 @@ class CategoryController extends BaseController
         $data = [
             'categories' => $categories,
         ];
-        return view('portal.categories', $data);
+        return view('portal.pages.categories.categories', $data);
+    }
+
+    public function create()
+    {
+        return view('portal.pages.categories.createCategory');
     }
 
 
@@ -25,19 +30,17 @@ class CategoryController extends BaseController
 
         $category = Category::where('name', $validatedData['title'])->first();
 
-        if ($category) {
+        if ($category > 0) {
             return back()->with('error', 'Category already exists!');
         }
-        else {
-            $categoryData = [
-                'name' => $validatedData['title'],
-            ];
 
-            $category = Category::create($categoryData);
-        }
+        $categoryData = [
+            'name' => $validatedData['title'],
+        ];
+
+        $category = Category::create($categoryData);
 
         return redirect()->route('categories')->with('success', 'Category created successfully!');
-
     }
 
     public function edit(Category $category)

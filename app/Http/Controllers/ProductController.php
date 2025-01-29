@@ -16,15 +16,15 @@ class ProductController extends BaseController
         $data = [
             'products' => $products,
         ];
-        return view('portal.products', $data);
+        return view('portal.pages.products.products', $data);
     }
 
-    public function store()
+    public function create()
     {
         $categories = Category::all();
         $units = Unit::all();
 
-        return view('portal.createProducts', [
+        return view('portal.pages.products.createProducts', [
             'categories' => $categories,
             'units' => $units,
         ]);
@@ -32,7 +32,7 @@ class ProductController extends BaseController
         return view('portal.createProducts', $data);
     }
 
-    public function createProduct(Request $request)
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
@@ -80,7 +80,6 @@ class ProductController extends BaseController
 
             $product = Product::create($productData);
 
-            // Log the quantity change if applicable
             if ($product->quantity > 0) {
                 \App\Models\ProductQuantityLog::create([
                     'product_id' => $product->id,
@@ -95,7 +94,7 @@ class ProductController extends BaseController
 
     public function edit(Product $product)
     {
-        return view('products.edit', compact('product'));
+        return view('portal.pages.products.edit', compact('product'));
     }
 
     public function update(Request $request, Product $product)

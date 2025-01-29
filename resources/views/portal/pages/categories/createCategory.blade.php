@@ -20,7 +20,14 @@
                     </div>
                 @endif
 
-                <form action="{{ route('createCategory') }}" method="POST" enctype="multipart/form-data">
+                <!-- Success Message -->
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('storeCategory') }}" method="POST">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
@@ -32,12 +39,12 @@
                                             value="{{ old('title') }}" placeholder="Enter Category Name">
                                     </div>
                                 </div>
-                            <div class="text-end">
-                                <button type="reset" class="btn btn-secondary me-2">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Add Item</button>
+                                <div class="text-end">
+                                    {{-- <button type="reset" class="btn btn-secondary me-2">Cancel</button> --}}
+                                    <button type="submit" class="btn btn-primary">Add Category</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </form>
             </div>
         </div>

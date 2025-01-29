@@ -9,7 +9,6 @@
                         <h5>Add Unit</h5>
                     </div>
                 </div>
-
                 @if ($errors->any())
                     <div class="alert alert-danger">
                         <ul>
@@ -20,7 +19,14 @@
                     </div>
                 @endif
 
-                <form action="{{ route('createUnit') }}" method="POST" enctype="multipart/form-data">
+                <!-- Success Message -->
+                @if (session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form action="{{ route('storeUnit') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-md-12">
@@ -32,12 +38,12 @@
                                             value="{{ old('title') }}" placeholder="Enter Unit Name">
                                     </div>
                                 </div>
-                            <div class="text-end">
-                                <button type="reset" class="btn btn-secondary me-2">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Add Item</button>
+                                <div class="text-end">
+                                    <button type="reset" class="btn btn-secondary me-2">Cancel</button>
+                                    <button type="submit" class="btn btn-primary">Add Item</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 </form>
             </div>
         </div>

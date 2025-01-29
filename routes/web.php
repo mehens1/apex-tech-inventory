@@ -26,17 +26,24 @@ Route::prefix('inventory')->middleware(['auth'])->group(function () {
     // Products
     Route::prefix('products')->group(function () {
         Route::get('/', [ProductController::class, 'index'])->name('products');
-        Route::get('/new', [ProductController::class, 'store'])->name('newProduct');
-        Route::post('/create', [ProductController::class, 'createProduct'])->name('createProduct');
+        Route::get('/new', [ProductController::class, 'create'])->name('newProduct');
+        Route::post('/create', [ProductController::class, 'store'])->name('storeProduct');
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
         Route::post('/{product}/update', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     });
 
     // Categories
-    Route::get('/categories', [CategoryController::class, 'index'])->name('categories');
+    Route::prefix('categories')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('categories');
+        Route::get('/new', [CategoryController::class, 'create'])->name('newCategory');
+        Route::post('/create', [CategoryController::class, 'store'])->name('storeCategory');
+    });
 
     // Units
-    Route::get('/units', [UnitController::class, 'index'])->name('units');
-
+    Route::prefix('units')->group(function () {
+        Route::get('/', [UnitController::class, 'index'])->name('units');
+        Route::get('/new', [UnitController::class, 'create'])->name('newUnit');
+        Route::post('/create', [UnitController::class, 'store'])->name('storeUnit');
+    });
 });

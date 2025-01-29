@@ -13,41 +13,23 @@ class UnitController extends BaseController
         $data = [
             'units' => $units,
         ];
-        return view('portal.units', $data);
+        return view('portal.pages.units.units', $data);
     }
 
-    public function store()
+    public function create()
     {
-        $units = Unit::all();
-
-        return view('portal.createUnits', [
-            'units' => $units,
-        ]);
-
-        return view('portal.createUnits', $data);
+        return view('portal.pages.units.createUnits');
     }
 
-    public function createUnit(Request $request)
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|max:255|unique:units,name',
         ]);
 
-        $unit = Unit::where('name', $validatedData['title'])->first();
-
-        if ($unit) {
-            return back()->with('error', 'Unit already exists!');
-        }
-        else {
-            $unitData = [
-                'name' => $validatedData['title'],
-            ];
-
-            $unit = Unit::create($unitData);
-        }
+        Unit::create(['name' => $validatedData['title']]);
 
         return redirect()->route('units')->with('success', 'Unit created successfully!');
-
     }
 
     public function edit(Unit $unit)

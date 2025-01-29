@@ -14,7 +14,7 @@
                             class="menu-arrow"></span></a>
                     <ul style="display: none;">
                         <li><a href="{{ route('products') }}">Product List</a></li>
-                        <li><a href="#">Category</a></li>
+                        <li><a href="{{ route('categories') }}">Category</a></li>
 
                         <li><a href="#">Units</a></li>
                     </ul>
