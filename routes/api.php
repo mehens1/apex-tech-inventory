@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\CategoryController;
 
 
 Route::get('/optimize', function () {
@@ -34,13 +35,6 @@ Route::get('/migrate-force', function () {
     return 'Database migrated with force!';
 });
 
-// Route::get('/reset-migrations', function () {
-//     Artisan::call('migrate:reset', ['--force' => true]);
-//     Artisan::call('migrate', ['--force' => true]);
-//     Artisan::call('db:seed', ['--force' => true]);
-//     return 'Migrations reset, database migrated, and seeded successfully!';
-// });
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -48,4 +42,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/{id}', [ProductController::class, 'product']);
+});
+
+Route::prefix('categories')->group(function () {
+    Route::get('/', [CategoryController::class, 'index']);
+    Route::get('/{id}', [CategoryController::class, 'category']);
 });

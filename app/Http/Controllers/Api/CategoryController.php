@@ -4,35 +4,33 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product;
+use App\Models\Category;
 
-class ProductController extends Controller
+class CategoryController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $perPage = $request->query('page', 9);
-
+        $categories = Category::withCount('products')->get();
         return response()->json([
             'success' => true,
-            'data' => Product::orderBy('id', 'desc')->paginate(9),
+            'data' => $categories,
         ], 200);
     }
 
-    public function product($id)
+    public function category($id)
     {
-        $product = Product::find($id);
+        $category = Category::find($id);
 
-        if (!$product) {
+        if (!$category) {
             return response()->json([
                 'success' => false,
-                'message' => 'Product not found',
+                'message' => 'Category not found',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $product,
+            'data' => $category,
         ], 200);
     }
 }
-
