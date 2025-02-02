@@ -26,6 +26,6 @@ class DashboardController extends BaseController
             'salute' => $greeting,
             'message' => $message
         ];
-        return view('portal.dashboard', $data);
+        return view('portal.pages.dashboard', $data);
     }
 }
