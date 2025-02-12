@@ -52,17 +52,12 @@ class ProductController extends BaseController
             'image' => 'nullable|image|max:5120',
         ]);
 
-        if ($request->hasFile('image')) {
-            $validatedData['image'] = $request->file('image')->store('product-images', 'public');
-        }
-
         $product = Product::where('item', $validatedData['title'])->first();
 
         if ($product) {
             $product->quantity += $validatedData['quantity'];
             $product->save();
 
-            // Log the quantity change
             if ($validatedData['quantity'] > 0) {
                 \App\Models\ProductQuantityLog::create([
                     'product_id' => $product->id,
@@ -73,8 +68,7 @@ class ProductController extends BaseController
 
             return redirect()->route('products')->with('success', 'Product quantity updated successfully!');
         } else {
-            // Product does not exist, create a new product
-            $productData = [
+            $product = Product::create([
                 'item' => $validatedData['title'],
                 'purchase_price' => $validatedData['purchase_price'],
                 'selling_price' => $validatedData['selling_price'],
@@ -82,10 +76,14 @@ class ProductController extends BaseController
                 'unit_id' => $validatedData['unit_id'],
                 'quantity' => $validatedData['quantity'],
                 'description' => $validatedData['description'] ?? null,
-                'image' => $validatedData['image'] ?? null,
-            ];
+            ]);
 
-            $product = Product::create($productData);
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $folder = "images/products/{$product->id}";
+                $uploadedFileUrl = $this->fileUploadService->uploadFile($file, $folder);
+                $product->update(['image' => $uploadedFileUrl]);
+            }
 
             if ($product->quantity > 0) {
                 \App\Models\ProductQuantityLog::create([
