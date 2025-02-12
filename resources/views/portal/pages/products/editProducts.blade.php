@@ -117,7 +117,11 @@
 
                             <div class="text-end">
                                 <button type="reset" class="btn btn-secondary me-2">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Update Product</button>
+                                <button type="submit" class="btn btn-primary" data-submit-btn
+                                    data-loading-text="Updating...">
+                                    <span class="btn-text">Update Product</span>
+                                    <span class="spinner spinner-border spinner-border-sm d-none"></span>
+                                </button>
                             </div>
                         </div>
                     </div>
