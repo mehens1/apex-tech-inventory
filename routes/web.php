@@ -29,7 +29,7 @@ Route::prefix('inventory')->middleware(['auth'])->group(function () {
         Route::get('/new', [ProductController::class, 'create'])->name('newProduct');
         Route::post('/create', [ProductController::class, 'store'])->name('storeProduct');
         Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-        Route::post('/{product}/update', [ProductController::class, 'update'])->name('products.update');
+        Route::put('/{product}/update', [ProductController::class, 'update'])->name('products.update');
         Route::delete('/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
     });
 

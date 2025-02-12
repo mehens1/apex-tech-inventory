@@ -117,9 +117,10 @@
                                                 <td>₦ {{ number_format($product->selling_price, 2) }}</td>
                                                 <td>₦ {{ number_format($product->purchase_price, 2) }}</td>
                                                 <td class="d-flex align-items-center">
-                                                    <a class="btn-action-icon me-2" href="javascript:void(0);"
-                                                        data-bs-toggle="modal" data-bs-target="#edit_unit"><i
-                                                            class="fe fe-edit"></i></a>
+                                                    <a class="btn-action-icon me-2"
+                                                        href="{{ route('products.edit', $product->id) }}"><i
+                                                            class="fe fe-edit"></i>
+                                                    </a>
                                                     {{-- <a class="btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
                                                         data-bs-target="#delete_modal"><i class="fe fe-trash-2"></i></a> --}}
                                                 </td>

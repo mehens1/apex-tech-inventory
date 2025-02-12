@@ -6,13 +6,22 @@ use App\Models\Product;
 use App\Models\Category;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use App\Services\FileUploadService;
 
 class ProductController extends BaseController
 {
+    protected $fileUploadService;
+
+    public function __construct(FileUploadService $fileUploadService)
+    {
+        parent::__construct();
+        $this->fileUploadService = $fileUploadService;
+    }
+
     public function index()
     {
         $products = Product::with(['category', 'unit'])->get();
-        $user = "Auth::user()->load('role')";
         $data = [
             'products' => $products,
         ];
@@ -28,8 +37,6 @@ class ProductController extends BaseController
             'categories' => $categories,
             'units' => $units,
         ]);
-
-        return view('portal.createProducts', $data);
     }
 
     public function store(Request $request)
@@ -94,37 +101,53 @@ class ProductController extends BaseController
 
     public function edit(Product $product)
     {
-        return view('portal.pages.products.edit', compact('product'));
+        $categories = Category::all();
+        $units = Unit::all();
+
+        return view('portal.pages.products.editProducts', [
+            'categories' => $categories,
+            'units' => $units,
+            'product' => $product
+        ]);
     }
 
     public function update(Request $request, Product $product)
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'title' => 'required|string|max:255',
-            'purchase_price' => 'required|numeric|min:0',
-            'selling_price' => 'required|numeric|min:0',
+            'purchase_price' => 'required|numeric',
+            'selling_price' => 'required|numeric',
             'category_id' => 'required|exists:categories,id',
             'unit_id' => 'required|exists:units,id',
-            'quantity' => 'required|integer|min:0',
+            'quantity' => 'required|integer|min:1',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        if ($request->hasFile('image')) {
-            $validatedData['image'] = $request->file('image')->store('product-images', 'public');
+        try {
+            $product->item = $request->title;
+            $product->purchase_price = $request->purchase_price;
+            $product->selling_price = $request->selling_price;
+            $product->category_id = $request->category_id;
+            $product->unit_id = $request->unit_id;
+            $product->quantity = $request->quantity;
+            $product->description = $request->description;
+
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $folder = "images/products/$product->id";
+                $uploadedFileUrl = $this->fileUploadService->uploadFile($file, $folder);
+                $product->image = $uploadedFileUrl;
+            }
+
+            $product->save();
+
+            return redirect()->route('products.edit', $product->id)->with('success', 'Product updated successfully.');
+        } catch (\Throwable $th) {
+            \Log::error('Product update failed: ' . $th->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while updating the product.');
         }
 
-        $product->update($validatedData);
-
-        if ($validatedData['quantity'] != $product->quantity) {
-            \App\Models\ProductQuantityLog::create([
-                'product_id' => $product->id,
-                'quantity_change' => $validatedData['quantity'] - $product->quantity,
-                'user_id' => auth()->id(),
-            ]);
-        }
-
-        return redirect()->route('products')->with('success', 'Product updated successfully!');
     }
 
     public function destroy(Product $product)
