@@ -104,7 +104,8 @@
                             </div>
 
                             <div class="text-end">
-                                <button type="reset" class="btn btn-secondary me-2">Cancel</button>
+                                <button type="button" class="btn btn-secondary me-2"
+                                    onclick="window.history.back();">Cancel</button>
                                 <button type="submit" class="btn btn-primary" data-submit-btn
                                     data-loading-text="Submitting...">
                                     <span class="btn-text">Add Product</span>

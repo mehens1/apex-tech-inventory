@@ -104,10 +104,12 @@
                                                 <td>{{ $loop->iteration }}</td>
                                                 <td>
                                                     <h2 class="table-avatar">
-                                                        {{-- <a href="#" class="avatar avatar-md me-2 companies">
-                                                            <img class="avatar-img sales-rep"
-                                                                src="assets/img/sales-return8.svg" alt="Product Image">
-                                                        </a> --}}
+                                                        @if ($product->image)
+                                                            <a href="#" class="avatar avatar-md me-2 companies">
+                                                                <img class="avatar-img sales-rep"
+                                                                    src="{{ $product->image }}" alt="{{ $product->item }}">
+                                                            </a>
+                                                        @endif
                                                         <a href="#">{{ $product->item }}</a>
                                                     </h2>
                                                 </td>
@@ -117,14 +119,6 @@
                                                 <td>₦ {{ number_format($product->selling_price, 2) }}</td>
                                                 <td>₦ {{ number_format($product->purchase_price, 2) }}</td>
                                                 <td class="d-flex align-items-center">
-                                                    <a class="btn-action-icon me-2"
-                                                        href="{{ route('products.edit', $product->id) }}"><i
-                                                            class="fe fe-edit"></i>
-                                                    </a>
-                                                    {{-- <a class="btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
-                                                        data-bs-target="#delete_modal"><i class="fe fe-trash-2"></i></a> --}}
-                                                </td>
-                                                {{-- <td class="d-flex align-items-center">
                                                     <div class="dropdown dropdown-action">
                                                         <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
                                                             aria-expanded="false">
@@ -138,17 +132,17 @@
                                                                         <i class="far fa-edit me-2"></i>Edit
                                                                     </a>
                                                                 </li>
-                                                                <li>
+                                                                {{-- <li>
                                                                     <a class="dropdown-item" href="#"
                                                                         data-bs-toggle="modal"
                                                                         data-bs-target="#delete_modal_{{ $product->id }}">
                                                                         <i class="far fa-trash-alt me-2"></i>Delete
                                                                     </a>
-                                                                </li>
+                                                                </li> --}}
                                                             </ul>
                                                         </div>
                                                     </div>
-                                                </td> --}}
+                                                </td>
                                             </tr>
                                         @empty
                                             <tr>
@@ -163,6 +157,5 @@
                 </div>
             </div>
         </div>
-        <!-- /Table -->
     </div>
 @endsection
