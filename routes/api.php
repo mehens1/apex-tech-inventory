@@ -4,7 +4,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\UserAuthController;
+use Illuminate\Support\Facades\Artisan;
 
+
+Route::post('/login', [UserAuthController::class, 'login']);
+Route::post('/register', [UserAuthController::class, 'register']); 
 
 Route::get('/optimize', function () {
     \Artisan::call('optimize');
@@ -48,3 +53,8 @@ Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
     Route::get('/{id}', [CategoryController::class, 'category']);
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/logout', [UserAuthController::class, 'logout']);
+});
+
