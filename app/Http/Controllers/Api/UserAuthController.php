@@ -1,62 +1,61 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-use App\Models\User; 
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class UserAuthController extends Controller
 {
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'identifier' => 'required',
             'password' => 'required|min:8',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $user = Auth::user();
-            $token = $user->createToken('apex-solar-inventory')->plainTextToken;
-            return response()->json([
-                'success' => true,
-                'token' => $token,
-                'user' => $user,
-            ], 200);
-        }
-        return response()->json([
-            'success' => false,
-            'message' => 'Invalid email or password',
-        ], 401);
+        $fieldType = filter_var($request->identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        $credentials = [$fieldType => $request->identifier, 'password' => $request->password];
 
+        if (!$token = JWTAuth::attempt($credentials)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid credentials. Please check your email/phone and password.',
+            ], 401);
+        }
+
+        return response()->json([
+            'success' => true,
+            'token' => $token,
+            'user' => Auth::user(),
+        ], 200);
     }
 
     public function register(Request $request) {
         $request->validate([
             'firstName' => 'required|string',
             'lastName' => 'required|string',
-            'phone' => 'required|numeric|digits_between:10,15|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed',
+            'phone' => 'required|numeric|digits_between:10,15|unique:users',
+            'password' => 'required|min:8',
         ]);
 
         $user = User::create([
             'firstName' => $request->firstName,
             'lastName' => $request->lastName,
-            'phone' => $request->phone,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => Hash::make($request->password),
             'is_customer' => true,
         ]);
 
-        Auth::login($user);
-        $token = $user->createToken('apex-solar-inventory')->plainTextToken;
         return response()->json([
             'success' => true,
-            'token' => $token,
-            'user' => $user,
+            'message' => "$user->firstName, you have been registered successfully!",
         ], 201);
     }
 
@@ -68,7 +67,7 @@ class UserAuthController extends Controller
         Auth::logout();
         return response()->json([
             'success' => true,
-            'message' => 'Logged out successfully',
+            'message' => 'Logged out successfully!',
         ], 200);
     }
 }
