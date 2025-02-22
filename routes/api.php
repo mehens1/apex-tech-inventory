@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\UserAuthController;
+use App\Http\Controllers\Api\CartController;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
 
 Route::post('/login', [UserAuthController::class, 'login']);
@@ -17,7 +20,7 @@ Route::prefix('user')->middleware('auth:api')->group(function () {
 });
 
 Route::prefix('cart')->middleware('auth:api')->group(function () {
-    Route::post('/', [ProductController::class, 'store']); // Consider using a CartController if handling cart logic
+    Route::post('/', [ProductController::class, 'store']);
 });
 
 
