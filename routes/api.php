@@ -7,54 +7,28 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\UserAuthController;
 use Illuminate\Support\Facades\Artisan;
 
-
 Route::post('/login', [UserAuthController::class, 'login']);
-Route::post('/register', [UserAuthController::class, 'register']); 
+Route::post('/register', [UserAuthController::class, 'register']);
 
-Route::get('/optimize', function () {
-    \Artisan::call('optimize');
-    return 'Application optimized successfully!';
+Route::prefix('user')->middleware('auth:api')->group(function () {
+    Route::get('/', [UserAuthController::class, 'profile']);
+    Route::post('/logout', [UserAuthController::class, 'logout']);
+    Route::put('/update', [UserAuthController::class, 'updateProfile']);
 });
 
-Route::get('/migrate', function () {
-    \Artisan::call('migrate');
-    return 'Database migrated successfully!';
+Route::prefix('cart')->middleware('auth:api')->group(function () {
+    Route::post('/', [ProductController::class, 'store']); // Consider using a CartController if handling cart logic
 });
 
-Route::get('/migrate', function () {
-    \Artisan::call('migrate');
-    return 'Database migrated successfully!';
-});
 
-Route::get('/generate-key', function () {
-    try {
-        Artisan::call('key:generate', ['--force' => true]);
-        return response()->json(['message' => 'Application key generated successfully.'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-});
-
-Route::get('/migrate-force', function () {
-    \Artisan::call('migrate', ['--force' => true]);
-    return 'Database migrated with force!';
-});
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
+// Product routes
 Route::prefix('products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/{id}', [ProductController::class, 'product']);
 });
 
+// Category routes
 Route::prefix('categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
     Route::get('/{id}', [CategoryController::class, 'category']);
 });
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/logout', [UserAuthController::class, 'logout']);
-});
-

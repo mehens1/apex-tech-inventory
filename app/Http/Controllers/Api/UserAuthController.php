@@ -61,13 +61,30 @@ class UserAuthController extends Controller
 
     public function logout(Request $request)
     {
-        $request->user()->tokens->each(function ($token) {
-            $token->delete();
-        });
-        Auth::logout();
+        try {
+            JWTAuth::invalidate(JWTAuth::getToken());
+            Auth::logout();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Logged out successfully!',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to log out.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    public function profile()
+    {
         return response()->json([
             'success' => true,
-            'message' => 'Logged out successfully!',
+            'user' => Auth::user(),
         ], 200);
     }
+
 }
