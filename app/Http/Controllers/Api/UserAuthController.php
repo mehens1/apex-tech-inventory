@@ -87,4 +87,124 @@ class UserAuthController extends Controller
         ], 200);
     }
 
+    public function updateProfile(Request $request)
+    {
+        $user = Auth::user();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found!',
+            ], 404);
+        }
+
+        $request->validate([
+            'firstName' => 'required|string',
+            'lastName' => 'required|string',
+        ]);
+
+        
+        $user->update($request->all());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully!',
+            'user' => $user,
+        ], 200);
+    }
+
+    public function forgetPassword(Request $request) 
+    {
+        if (Auth::check()) {
+            return $this->changePassword($request);
+        }
+
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found!',
+            ], 404);
+        }
+
+        $token = JWTAuth::fromUser($user);
+
+        $user->update([
+            'password_reset_token' => $token,
+            'password_reset_sent_at' => now(),
+        ]);
+        
+        $resetUrl = url('/password-reset/?token=' . $token);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password reset link sent to your email!',
+        ], 200);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'currentPassword' => 'required|min:8',
+            'newPassword' => 'required|min:8',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->currentPassword, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Current password is incorrect.',
+            ], 400);
+        }
+
+        $user->password = Hash::make($request->newPassword);
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password changed successfully!',
+        ], 200);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'newPassword' => 'required|min:8',
+        ]);
+
+        $user = User::where('password_reset_token', $request->token)->first();
+
+        if($user->password_reset_sent_at->diffInHours(now()) > 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token expired!',
+            ], 400);
+        }
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid token!',
+            ], 400);
+        }
+
+        $user->password = Hash::make($request->newPassword);
+        $user->password_reset_token = null;
+        $user->password_reset_sent_at = null;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Password reset successfully!',
+        ], 200);
+    }
+
+
+
 }
