@@ -12,11 +12,14 @@ use Illuminate\Support\Facades\Artisan;
 
 Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/register', [UserAuthController::class, 'register']);
+Route::post('/forgot-password', [UserAuthController::class, 'forgetPassword']);
+Route::post('/reset-password/?:token', [UserAuthController::class, 'resetPassword']);
 
 Route::prefix('user')->middleware('auth:api')->group(function () {
     Route::get('/', [UserAuthController::class, 'profile']);
     Route::post('/logout', [UserAuthController::class, 'logout']);
     Route::put('/update', [UserAuthController::class, 'updateProfile']);
+    Route::put('/change-password', [UserAuthController::class, 'changePassword']);
 
     // Cart
     Route::prefix('cart')->group(function () {

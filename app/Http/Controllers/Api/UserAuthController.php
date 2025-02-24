@@ -103,7 +103,10 @@ class UserAuthController extends Controller
         ]);
 
         
-        $user->update($request->all());
+        $user->update([
+            'firstName' => $request->firstName,
+            'lastName' => $request->lastName,
+        ]);
 
         return response()->json([
             'success' => true,
@@ -155,6 +158,13 @@ class UserAuthController extends Controller
 
         $user = Auth::user();
 
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found!',
+            ], 404);
+        }
+
         if (!Hash::check($request->currentPassword, $user->password)) {
             return response()->json([
                 'success' => false,
@@ -173,17 +183,23 @@ class UserAuthController extends Controller
 
     public function resetPassword(Request $request)
     {
+        $token = $request->query('token');
+        if (!$token) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Rest your password again!',
+            ], 400);
+        }
         $request->validate([
-            'token' => 'required',
             'newPassword' => 'required|min:8',
         ]);
 
-        $user = User::where('password_reset_token', $request->token)->first();
+        $user = User::where('password_reset_token', $token)->first();
 
         if($user->password_reset_sent_at->diffInHours(now()) > 1) {
             return response()->json([
                 'success' => false,
-                'message' => 'Token expired!',
+                'message' => 'Rest your password again!',
             ], 400);
         }
 
