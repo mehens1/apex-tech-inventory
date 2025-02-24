@@ -17,10 +17,13 @@ Route::prefix('user')->middleware('auth:api')->group(function () {
     Route::get('/', [UserAuthController::class, 'profile']);
     Route::post('/logout', [UserAuthController::class, 'logout']);
     Route::put('/update', [UserAuthController::class, 'updateProfile']);
-});
 
-Route::prefix('cart')->middleware('auth:api')->group(function () {
-    Route::post('/', [ProductController::class, 'store']);
+    // Cart
+    Route::prefix('cart')->group(function () {
+        Route::get('/', [CartController::class, 'index']);
+        Route::post('/', [CartController::class, 'store']);
+    });
+
 });
 
 

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-    public function ViewCart()
+    public function index()
     {
 
         $cart = Cart::firstOrCreate(['user_id' => auth()->id()])->load('items.product');
@@ -19,7 +19,6 @@ class CartController extends Controller
 
         return response()->json([
             'data' => [
-                'id' => $cart->id,
                 'items' => $cart->items->map(function ($item) {
                     return [
                         'id' => $item->id,
@@ -35,7 +34,7 @@ class CartController extends Controller
         ]);
     }
 
-    public function AddToCart(Request $request)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
