@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Carbon\Carbon;
 
 class UserAuthController extends Controller
 {
@@ -102,11 +103,9 @@ class UserAuthController extends Controller
             'lastName' => 'required|string',
         ]);
 
-        
-        $user->update([
-            'firstName' => $request->firstName,
-            'lastName' => $request->lastName,
-        ]);
+        $user->firstName = $request->firstName;
+        $user->lastName = $request->lastName;
+        $user->save();
 
         return response()->json([
             'success' => true,
@@ -134,18 +133,25 @@ class UserAuthController extends Controller
             ], 404);
         }
 
-        $token = JWTAuth::fromUser($user);
+        $token = substr(JWTAuth::fromUser($user), 0, 255);
 
-        $user->update([
-            'password_reset_token' => $token,
-            'password_reset_sent_at' => now(),
-        ]);
+        if (!$token) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to generate token!',
+            ], 500);
+        }
+
+        $user->password_reset_token = $token;
+        $user->password_reset_sent_at = now();
+        $user->save();
         
-        $resetUrl = url('/password-reset/?token=' . $token);
+        $resetUrl = url('/api/reset-password?/?token=' . $token);
 
         return response()->json([
             'success' => true,
             'message' => 'Password reset link sent to your email!',
+            'resetUrl' => $resetUrl,
         ], 200);
     }
 
@@ -190,25 +196,27 @@ class UserAuthController extends Controller
                 'message' => 'Rest your password again!',
             ], 400);
         }
+
         $request->validate([
             'newPassword' => 'required|min:8',
         ]);
 
         $user = User::where('password_reset_token', $token)->first();
 
-        if($user->password_reset_sent_at->diffInHours(now()) > 1) {
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No user found, Invalid token!',
+            ], 400);
+        }
+
+        if (now()->diffInHours(Carbon::parse($user->password_reset_sent_at)) > 1) {
             return response()->json([
                 'success' => false,
                 'message' => 'Rest your password again!',
             ], 400);
         }
 
-        if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid token!',
-            ], 400);
-        }
 
         $user->password = Hash::make($request->newPassword);
         $user->password_reset_token = null;

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Artisan;
 Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/register', [UserAuthController::class, 'register']);
 Route::post('/forgot-password', [UserAuthController::class, 'forgetPassword']);
-Route::post('/reset-password/?:token', [UserAuthController::class, 'resetPassword']);
+Route::post('/reset-password', [UserAuthController::class, 'resetPassword']);
 
 Route::prefix('user')->middleware('auth:api')->group(function () {
     Route::get('/', [UserAuthController::class, 'profile']);
