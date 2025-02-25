@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\PasswordRest;
+use App\Http\Controllers\EmailController;
 
 class UserAuthController extends Controller
 {
@@ -147,6 +150,9 @@ class UserAuthController extends Controller
         $user->save();
         
         $resetUrl = url('/api/reset-password?/?token=' . $token);
+
+        $emailController = new EmailController();
+        $emailController->resetpassword($resetUrl, $user->email);
 
         return response()->json([
             'success' => true,
