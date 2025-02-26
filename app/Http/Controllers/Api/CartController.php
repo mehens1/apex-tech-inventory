@@ -23,8 +23,8 @@ class CartController extends Controller
                     return [
                         'id' => $item->id,
                         'product_id' => $item->product_id,
-                        'name' => $item->product->item,
-                        'price' => floatval($item->product->selling_price),
+                        'item' => $item->product->item,
+                        'selling_price' => floatval($item->product->selling_price),
                         'quantity' => $item->quantity,
                         'subtotal' => $item->product->selling_price * $item->quantity,
                     ];
@@ -36,35 +36,41 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
+        \Log::debug("request: ", [$request]);
+
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
-        return DB::transaction(function () use ($validated) {
-            $cart = Cart::firstOrCreate(['user_id' => auth()->user()->id]);
-            $product = Product::findOrFail($validated['product_id']);
+        \Log::debug("product_id: ", [$validated['product_id']]);
+        \Log::debug("quantity: ", [$validated['quantity']]);
 
-            $cartItem = $cart->items()
-                ->where('product_id', $product->id)
-                ->lockForUpdate()
-                ->first();
+        $user = auth()->id();
 
-            if ($cartItem) {
-                $cartItem->increment('quantity', $validated['quantity']);
-            } else {
-                $cartItem = $cart->items()->create([
-                    'product_id' => $product->id,
-                    'quantity' => $validated['quantity'],
-                    'price' => $product->selling_price,
-                ]);
-            }
+        // Check if the user already has this product in the cart
+        $existingCartItem = Cart::where('user_id', $user)
+            ->where('product_id', $validated['product_id'])
+            ->first();
 
+        if ($existingCartItem) {
             return response()->json([
-                'message' => 'Item added to cart',
-                'data' => $cartItem
-            ], 201);
-        });
+                'message' => 'This product is already in your cart.'
+            ], 409);
+        }
+
+        $cartItem = Cart::create([
+            'user_id' => $user,
+            'product_id' => $validated['product_id'],
+            'quantity' => $validated['quantity'],
+            'price' => $validated['price'] ?? null,
+        ]);
+
+        return response()->json([
+            'message' => 'Cart item added!',
+            'data' => $cartItem
+        ]);
     }
 
     public function UpdateCart(Request $request, CartItem $cartItem)
