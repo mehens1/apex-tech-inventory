@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\UserAuthController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\CheckoutController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
@@ -15,6 +16,9 @@ Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/register', [UserAuthController::class, 'register']);
 Route::post('/forgot-password', [UserAuthController::class, 'forgetPassword']);
 Route::post('/reset-password', [UserAuthController::class, 'resetPassword']);
+Route::post('/checkout', [CheckoutController::class, 'placeorder']);
+Route::get('/order', [CheckoutController::class, 'verifyPayment']);
+Route::post('/order', [CheckoutController::class, 'CallBack']);
 
 Route::prefix('user')->middleware('auth:api')->group(function () {
     Route::get('/', [UserAuthController::class, 'profile']);
