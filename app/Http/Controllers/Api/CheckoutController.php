@@ -28,7 +28,7 @@ class CheckoutController extends Controller
         $validated = $request->validate([
             'items' => 'required|array',
             'vat' => 'nullable|numeric',
-            'discount_code' => 'nuallable',
+            'discount_code' => 'nullable|string',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email',
