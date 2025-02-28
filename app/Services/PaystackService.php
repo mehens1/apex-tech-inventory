@@ -93,6 +93,7 @@ class PaystackService
         } else {
             return response()->json([
                 'error' => 'Payment verification failed',
+                'Pay Now' => $order->payment_url;
                 'details' => $response->body(),
                 'Pay now' => $order->payment_url,
             ], $response->status());
