@@ -58,7 +58,7 @@ class PaystackService
                 'error' => 'Reference not found',
             ], 400);
         }
-        $order = Order::where('id', $reference)->first();
+        $order = Order::where('reference_number', $reference)->first();
         if (!$order) {
             return response()->json([
                 'error' => 'Order not found',
