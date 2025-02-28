@@ -94,6 +94,7 @@ class PaystackService
             return response()->json([
                 'error' => 'Payment verification failed',
                 'details' => $response->body(),
+                'Pay now' => $order->payment_url,
             ], $response->status());
         }
     }
