@@ -27,8 +27,8 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'items' => 'required|array',
-            'discount_code' => 'nullable|string',
             'vat' => 'nullable|numeric',
+            'discount_code' => 'nullable|string',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email',
@@ -43,10 +43,10 @@ class CheckoutController extends Controller
         foreach ($validated['items'] as $item) {
             $product = Product::find($item['id']);
             if ($product) {
-                $total += $product->selling_price * $item['quantity'];
+            $total += $product->selling_price * $item['quantity'];
             }
         }
-        if ($validated['discount_code']) {
+        if (isset($validated['discount_code']) && $validated['discount_code']) {
             $discount = Discount::where('code', $validated['discount_code'])->first();
             if ($discount) {
                 if ($discount->type == 'fixed') {
@@ -57,11 +57,16 @@ class CheckoutController extends Controller
             }
         }
 
-        $totalaftervat = $total + $validated['vat'];
+        if ($validated['vat']) {
+            $total += $validated['vat'];
+        }
+
+    $userId = auth()->id();
 
         $orderController = new OrderController();
-        $order = $orderController->create($validated, $totalaftervat);
-        $payment = $this->paystackService->payment($totalaftervat, $order->id);
+        $order = $orderController->Create($validated, $total, $userId);
+        $payment = $this->paystackService->payment($total, $order->reference_number);
+
         return $payment;
     }
 
@@ -83,4 +88,15 @@ class CheckoutController extends Controller
     {
         return $this->paystackService->getUpdate($request);
     }
+
+    // public function payNow(Request $request)
+    // {
+    //     $order = Order::find($request->order_id);
+    //     $orderul = $order->order_url;
+    //     //check if url is still valid or expired
+    //     //if expired, generate new url
+    //     //update url and update the order url and reference
+    //     // $this->placeorder
+    //     // return $this->paystackService->payment($request);
+    // }
 }

@@ -17,8 +17,8 @@ Route::post('/register', [UserAuthController::class, 'register']);
 Route::post('/forgot-password', [UserAuthController::class, 'forgetPassword']);
 Route::post('/reset-password', [UserAuthController::class, 'resetPassword']);
 Route::post('/checkout', [CheckoutController::class, 'placeorder']);
-Route::get('/order', [CheckoutController::class, 'verifyPayment']);
-Route::post('/order', [CheckoutController::class, 'CallBack']);
+Route::post('/order', [CheckoutController::class, 'verifyPayment']);
+Route::get('/order', [CheckoutController::class, 'CallBack']);
 
 Route::prefix('user')->middleware('auth:api')->group(function () {
     Route::get('/', [UserAuthController::class, 'profile']);
