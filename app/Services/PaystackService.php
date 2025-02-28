@@ -85,7 +85,7 @@ class PaystackService
             if ($data['data']['status'] === 'success' && $data['data']['amount'] == $order->total_amount * 100) {
                 if ($order->status === 'pending') {
                     $order->status = 'paid';
-                    $order->payment_reference = null;
+                    $order->payment_url = null;
                     $order->save();
                     return response()->json([
                         'message' => 'Payment successful',
