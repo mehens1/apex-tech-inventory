@@ -12,7 +12,7 @@ class PaystackService
 {
     public function payment($totalaftervat, $order_id)
     {
-        $order = Order::find($order_id);
+        $order = Order::where('reference_number', $order_id)->first();
         if (!$order) {
             return response()->json([
                 'error' => 'Order not found while creating payment',
@@ -38,6 +38,14 @@ class PaystackService
         if ($response->successful()) {
             $data = $response->json();
             // Process the response data as needed
+            if (isset($data['data']['authorization_url'])) {
+                $order->payment_url = $data['data']['authorization_url'];
+            } else {
+                return response()->json([
+                    'error' => 'Authorization URL not found in response',
+                ], 500);
+            }
+            $order->save();
             return response()->json($data);
         } else {
             // Handle errors accordingly
@@ -77,6 +85,7 @@ class PaystackService
             if ($data['data']['status'] === 'success' && $data['data']['amount'] == $order->total_amount * 100) {
                 if ($order->status === 'pending') {
                     $order->status = 'paid';
+                    $order->payment_reference = null;
                     $order->save();
                     return response()->json([
                         'message' => 'Payment successful',
@@ -89,11 +98,16 @@ class PaystackService
                         'details' => $data,
                     ]);
                 }
+            } else {
+                return response()->json([
+                    'error' => 'Payment verification failed',
+                    'Pay Now' => $order->payment_url,
+                    'details' => $data,
+                ], 400);
             }
         } else {
             return response()->json([
                 'error' => 'Payment verification failed',
-                'Pay Now' => $order->payment_url;
                 'details' => $response->body(),
                 'Pay now' => $order->payment_url,
             ], $response->status());

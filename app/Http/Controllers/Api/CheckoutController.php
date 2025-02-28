@@ -43,10 +43,10 @@ class CheckoutController extends Controller
         foreach ($validated['items'] as $item) {
             $product = Product::find($item['id']);
             if ($product) {
-                $total += $product->selling_price * $item['quantity'];
+            $total += $product->selling_price * $item['quantity'];
             }
         }
-        if ($validated['discount_code']) {
+        if (isset($validated['discount_code']) && $validated['discount_code']) {
             $discount = Discount::where('code', $validated['discount_code'])->first();
             if ($discount) {
                 if ($discount->type == 'fixed') {
@@ -59,12 +59,12 @@ class CheckoutController extends Controller
 
         $totalaftervat = $total + $validated['vat'];
 
+    $userId = auth()->id();
+
         $orderController = new OrderController();
-        $order = $orderController->create($validated, $totalaftervat);
+        $order = $orderController->Create($validated, $totalaftervat, $userId);
         $payment = $this->paystackService->payment($totalaftervat, $order->reference_number);
-        $order->payment_url = $payment['data']['authorization_url'];
-        $order->reference = $payment['data']['reference'];
-        $order->save();
+
         return $payment;
     }
 
