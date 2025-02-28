@@ -30,12 +30,12 @@ class OrderController extends Controller
         return DB::transaction(function () use ($validated, $user_id, $total) {
             $order = new Order();
             $order->user_id = $user_id;
-            $order->discount_code = $validated['discount_code'];
+            $order->discount_code = $validated['discount_code'] ?? null;
             $order->first_name = $validated['first_name'];
             $order->last_name = $validated['last_name'];
             $order->email = $validated['email'];
             $order->phone = $validated['phone'];
-            $order->vat = $validated['vat'];
+            $order->vat = $validated['vat'] ?? 0;
             $order->shipping_address = $validated['shipping_address'];
             $order->payment_method = $validated['payment_method'];
             $order->total_amount = $total;

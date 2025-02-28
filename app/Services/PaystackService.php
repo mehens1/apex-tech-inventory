@@ -118,7 +118,8 @@ class PaystackService
     {
         $payload = $request->all();
         $input = @file_get_contents("php://input");
-        $signature = $request->header('HTTP_X_PAYSTACK_SIGNATURE');
+        $signature = $request->header('x-paystack-signature');
+
         if (!$signature) {
             return response()->json([
                 'error' => 'Signature not found',

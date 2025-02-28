@@ -57,13 +57,15 @@ class CheckoutController extends Controller
             }
         }
 
-        $totalaftervat = $total + $validated['vat'];
+        if ($validated['vat']) {
+            $total += $validated['vat'];
+        }
 
     $userId = auth()->id();
 
         $orderController = new OrderController();
-        $order = $orderController->Create($validated, $totalaftervat, $userId);
-        $payment = $this->paystackService->payment($totalaftervat, $order->reference_number);
+        $order = $orderController->Create($validated, $total, $userId);
+        $payment = $this->paystackService->payment($total, $order->reference_number);
 
         return $payment;
     }
