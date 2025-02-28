@@ -140,7 +140,7 @@ class PaystackService
         $data = $payload['data'];
 
         if ($event === 'charge.success') {
-            $order = Order::where('id', $data['reference'])->first();
+            $order = Order::where('reference_number', $data['reference'])->first();
             if ($order && $data['amount'] == $order->total_amount * 100) 
             {
                 $order->status = 'paid';
