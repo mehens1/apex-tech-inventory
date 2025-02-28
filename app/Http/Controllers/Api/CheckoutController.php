@@ -27,7 +27,6 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'items' => 'required|array',
-            'discount_code' => 'nullable|string',
             'vat' => 'nullable|numeric',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
@@ -61,7 +60,10 @@ class CheckoutController extends Controller
 
         $orderController = new OrderController();
         $order = $orderController->create($validated, $totalaftervat);
-        $payment = $this->paystackService->payment($totalaftervat, $order->id);
+        $payment = $this->paystackService->payment($totalaftervat, $order->reference_number);
+        $order->payment_url = $payment['data']['authorization_url'];
+        $order->reference = $payment['data']['reference'];
+        $order->save();
         return $payment;
     }
 
@@ -83,4 +85,15 @@ class CheckoutController extends Controller
     {
         return $this->paystackService->getUpdate($request);
     }
+
+    // public function payNow(Request $request)
+    // {
+    //     $order = Order::find($request->order_id);
+    //     $orderul = $order->order_url;
+    //     //check if url is still valid or expired
+    //     //if expired, generate new url
+    //     //update url and update the order url and reference
+    //     // $this->placeorder
+    //     // return $this->paystackService->payment($request);
+    // }
 }

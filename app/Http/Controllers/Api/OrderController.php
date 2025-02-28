@@ -39,6 +39,7 @@ class OrderController extends Controller
             $order->shipping_address = $validated['shipping_address'];
             $order->payment_method = $validated['payment_method'];
             $order->total_amount = $total;
+            $order->reference_number = 'ORD-' . strtoupper(uniqid());
             $order->save();
 
             foreach ($validated['items'] as $item) {
