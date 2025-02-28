@@ -61,7 +61,7 @@ class CheckoutController extends Controller
             $total += $validated['vat'];
         }
 
-    $userId = auth()->id();
+        $userId = auth()->id();
 
         $orderController = new OrderController();
         $order = $orderController->Create($validated, $total, $userId);
@@ -72,6 +72,9 @@ class CheckoutController extends Controller
 
     public function CallBack(Request $request)
     {
+        \Log::debug("mehens check here: CallBack");
+        \Log::debug($request);
+
         try{
             $pay = $this->paystackService->CallBack($request);
             return $pay;
@@ -81,11 +84,13 @@ class CheckoutController extends Controller
                 'error' => $e->getMessage(),
             ], 400);
         }
-        
+
     }
 
     public function verifyPayment(Request $request)
     {
+        \Log::debug("mehens check here: verifyPayment");
+        \Log::debug($request);
         return $this->paystackService->getUpdate($request);
     }
 

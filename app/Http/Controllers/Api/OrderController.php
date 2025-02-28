@@ -39,7 +39,7 @@ class OrderController extends Controller
             $order->shipping_address = $validated['shipping_address'];
             $order->payment_method = $validated['payment_method'];
             $order->total_amount = $total;
-            $order->reference_number = "ORD-" . Str::random(6);
+            $order->reference_number = "ORD-" . Str::random(8);
             $order->save();
 
             foreach ($validated['items'] as $item) {

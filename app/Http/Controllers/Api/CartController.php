@@ -13,24 +13,12 @@ class CartController extends Controller
 {
     public function index()
     {
-
-        $cart = Cart::firstOrCreate(['user_id' => auth()->id()])->load('items.product');
-        // $cart = cart()->with(['items.product'])->firstOrCreate();
-
+        $cart = Cart::where('user_id', auth()->id())->with('product')->get();
         return response()->json([
-            'data' => [
-                'items' => $cart->items->map(function ($item) {
-                    return [
-                        'id' => $item->id,
-                        'product_id' => $item->product_id,
-                        'item' => $item->product->item,
-                        'selling_price' => floatval($item->product->selling_price),
-                        'quantity' => $item->quantity,
-                        'subtotal' => $item->product->selling_price * $item->quantity,
-                    ];
-                }),
-                'total' => $cart->items->sum(fn ($item) => $item->product->selling_price * $item->quantity),
-            ]
+            'data' => $cart,
+            'message' => "Cart fetched successfully!",
+            'status' => true,
+            'status_code' => 200
         ]);
     }
 

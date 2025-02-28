@@ -25,6 +25,7 @@ class Order extends Model
         'total_amount',
         'vat',
         'discount_code',
+        'payment_reference'
     ];
 
     /**
