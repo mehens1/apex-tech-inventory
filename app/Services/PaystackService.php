@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 $url = env('PAYSTACK_PAYMENT_URL') . '/transaction/initialize';
 $secretKey = env('PAYSTACK_SECRET_KEY');
+$uenv = env('APP_ENV');
+
 
 class PaystackService
 {
@@ -21,7 +23,11 @@ class PaystackService
         $url = env('PAYSTACK_PAYMENT_URL') . '/transaction/initialize';
         $secretKey = env('PAYSTACK_SECRET_KEY');
         $payAmount = floatval($totalaftervat * 100); // Amount should be in the smallest currency unit
-        $urlcallback = url('/order-validation');
+        if ($env === 'production') {
+            $urlcallback = 'https://apextech.ng/order-validation';
+        } else {
+            $urlcallback = 'http://localhost:5173/order-validation';
+        }
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $secretKey,
