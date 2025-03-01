@@ -21,7 +21,7 @@ class PaystackService
         $url = env('PAYSTACK_PAYMENT_URL') . '/transaction/initialize';
         $secretKey = env('PAYSTACK_SECRET_KEY');
         $payAmount = floatval($totalaftervat * 100); // Amount should be in the smallest currency unit
-        $urlcallback = url('/api/order/');
+        $urlcallback = url('/order-validation');
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $secretKey,
