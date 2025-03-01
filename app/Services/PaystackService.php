@@ -12,12 +12,6 @@ $secretKey = env('PAYSTACK_SECRET_KEY');
 
 class PaystackService
 {
-    public $uenv;
-
-    public function __construct()
-    {
-        $this->uenv = env('APP_ENV');
-    }
 
     public function payment($totalaftervat, $order_id)
     {
@@ -29,12 +23,7 @@ class PaystackService
         }
         $url = env('PAYSTACK_PAYMENT_URL') . '/transaction/initialize';
         $secretKey = env('PAYSTACK_SECRET_KEY');
-        $payAmount = floatval($totalaftervat * 100); // Amount should be in the smallest currency unit
-        if ($this->uenv === 'production') {
-            $urlcallback = 'https://apextech.ng/order-validation';
-        } else {
-            $urlcallback = 'http://localhost:5173/order-validation';
-        }
+        $payAmount = floatval($totalaftervat * 100);
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $secretKey,
@@ -42,10 +31,9 @@ class PaystackService
             'Cache-Control' => 'no-cache',
         ])->post($url, [
             'email'  => $order->email,
-            'amount' => $payAmount, // Amount should be in the smallest currency unit
+            'amount' => $payAmount,
             'reference' => $order_id,
             'currency' => "NGN",
-            'callback_url' => $urlcallback,
         ]);
 
         if ($response->successful()) {
@@ -66,8 +54,7 @@ class PaystackService
                 'error'   => 'Transaction initialization failed',
                 'details' => $response->body(),
             ], $response->status());
-        
-               
+
         }
     }
 
@@ -155,7 +142,7 @@ class PaystackService
 
         if ($event === 'charge.success') {
             $order = Order::where('reference_number', $data['reference'])->first();
-            if ($order && $data['amount'] == $order->total_amount * 100) 
+            if ($order && $data['amount'] == $order->total_amount * 100)
             {
                 $order->status = 'paid';
                 $order->save();
