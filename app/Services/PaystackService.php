@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 
 $url = env('PAYSTACK_PAYMENT_URL') . '/transaction/initialize';
 $secretKey = env('PAYSTACK_SECRET_KEY');
-$uenv = env('APP_ENV');
+$env = env('APP_ENV');
 
 
 class PaystackService
