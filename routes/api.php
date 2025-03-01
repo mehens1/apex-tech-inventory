@@ -30,6 +30,10 @@ Route::prefix('user')->middleware('auth:api')->group(function () {
     Route::prefix('cart')->group(function () {
         Route::get('/', [CartController::class, 'index']);
         Route::post('/', [CartController::class, 'store']);
+        Route::delete('/', [CartController::class, 'clearCart']);
+        Route::delete('/{cartItem}', [CartController::class, 'removeItemCart']);
+        Route::put('/{cartItem}', [CartController::class, 'updateCartItem']);
+    
     });
 
 });

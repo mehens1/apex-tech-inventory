@@ -95,7 +95,7 @@ class CartController extends Controller
         ]);
     }
 
-    public function RemoveItemCart(CartItem $cartItem)
+    public function removeItemCart(CartItem $cartItem)
     {
         if (auth()->user()->id !== $cartItem->cart->user_id) {
             return response()->json(['message' => 'Unauthorized action'], 403);
@@ -107,7 +107,7 @@ class CartController extends Controller
         }
     }
 
-    public function ClearCart()
+    public function clearCart()
     {
         $cart = Cart::where('user_id', auth()->id())->first();
 
