@@ -97,12 +97,13 @@ class CartController extends Controller
 
     public function clearCart()
     {
-        $cart = Cart::where('user_id', auth()->id())->first();
+        $deleted = Cart::where('user_id', auth()->id())->delete();
 
-        if ($cart) {
-            $cart->items()->delete();
-            $cart->delete();
+        if ($deleted) {
+            return response()->json(['message' => 'Cart cleared successfully'], 200);
         }
-        return response()->json(['message' => 'Cart cleared']);
+
+        return response()->json(['message' => 'No cart found'], 404);
     }
+
 }

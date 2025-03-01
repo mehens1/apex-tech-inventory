@@ -20,20 +20,24 @@ Route::post('/checkout', [CheckoutController::class, 'placeorder']);
 Route::post('/order', [CheckoutController::class, 'verifyPayment']);
 Route::get('/order', [CheckoutController::class, 'CallBack']);
 
-Route::prefix('user')->middleware('auth:api')->group(function () {
-    Route::get('/', [UserAuthController::class, 'profile']);
-    Route::post('/logout', [UserAuthController::class, 'logout']);
-    Route::put('/update', [UserAuthController::class, 'updateProfile']);
-    Route::put('/change-password', [UserAuthController::class, 'changePassword']);
+Route::middleware('auth:api')->group(function () {
 
-    // Cart
-    Route::prefix('cart')->group(function () {
-        Route::get('/', [CartController::class, 'index']);
-        Route::post('/', [CartController::class, 'store']);
-        Route::delete('/', [CartController::class, 'clearCart']);
-        Route::delete('/{cartItem}', [CartController::class, 'removeItemCart']);
-        Route::put('/{cartItem}', [CartController::class, 'updateCartItem']);
-    
+    Route::prefix('user')->group(function () {
+
+        Route::get('/', [UserAuthController::class, 'profile']);
+        Route::post('/logout', [UserAuthController::class, 'logout']);
+        Route::put('/update', [UserAuthController::class, 'updateProfile']);
+        Route::put('/change-password', [UserAuthController::class, 'changePassword']);
+
+        // Cart
+        Route::prefix('cart')->group(function () {
+            Route::get('/', [CartController::class, 'index']);
+            Route::post('/', [CartController::class, 'store']);
+            Route::delete('/', [CartController::class, 'clearCart']);
+            Route::delete('/{cartItem}', [CartController::class, 'removeItemCart']);
+            Route::put('/{cartItem}', [CartController::class, 'updateCartItem']);
+        });
+
     });
 
 });
