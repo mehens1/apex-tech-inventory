@@ -20,6 +20,18 @@
                     </ul>
                 </li>
 
+                <!-- Customer -->
+                <li class="menu-title"><span>Customer</span></li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-package"></i> <span> Customers</span> <span
+                            class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{{ route('customer.list') }}">Customer List</a></li>
+                        <li><a href="{{ route('customer.orders') }}">Orders</a></li>
+
+                    </ul>
+                </li>
+
                 <!-- Settings -->
                 <li class="menu-title"><span>Settings</span></li>
                 <li>

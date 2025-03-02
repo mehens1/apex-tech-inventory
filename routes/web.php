@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\CustomerController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -46,4 +47,15 @@ Route::prefix('inventory')->middleware(['auth'])->group(function () {
         Route::get('/new', [UnitController::class, 'create'])->name('newUnit');
         Route::post('/create', [UnitController::class, 'store'])->name('storeUnit');
     });
+});
+
+
+Route::prefix('customer')->middleware(['auth'])->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('customer');
+    });
+
+    Route::get('/list', [CustomerController::class, 'allCustomer'])->name('customer.list');
+    Route::get('/orders', [CustomerController::class, 'customerOrders'])->name('customer.orders');
+    Route::get('/order/{order}', [CustomerController::class, 'customerOrderDetails'])->name('customer.order');
 });
