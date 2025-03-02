@@ -19,7 +19,21 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $order = Order::where('user_id', auth()->id())
+                    ->get();
+        if (!$order) {
+            return response()->json([
+                'message' => 'No order found!',
+                'status' => false,
+                'status_code' => 404
+            ]);
+        }
+        return response()->json([
+            'message' => "Orders fetched successfully!",
+            'status' => true,
+            'status_code' => 200,
+            'data' => $order
+        ]);
     }
 
     /**
@@ -63,10 +77,39 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $reference)
     {
-        //
+        $userId = auth()->id();
+
+        // Fetch the order with related items in one query
+        $order = Order::where('reference_number', $reference)
+                    ->with('items')
+                    ->first();
+
+        // Return 404 if the order is not found
+        if (!$order) {
+            return response()->json([
+                'message' => 'Order not found!',
+                'status' => false,
+            ], 404);
+        }
+
+        // Check if the authenticated user is authorized to view the order
+        if ($userId !== $order->user_id) {
+            return response()->json([
+                'message' => 'Unauthorized access!',
+                'status' => false,
+            ], 401);
+        }
+
+        // Return the order details
+        return response()->json([
+            'message' => 'Order fetched successfully!',
+            'status' => true,
+            'data' => $order
+        ], 200);
     }
+
 
     /**
      * Update the specified resource in storage.

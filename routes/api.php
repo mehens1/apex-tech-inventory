@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\Api\OrderController;
+
 
 Route::post('/login', [UserAuthController::class, 'login']);
 Route::post('/register', [UserAuthController::class, 'register']);
@@ -36,6 +38,12 @@ Route::middleware('auth:api')->group(function () {
             Route::delete('/', [CartController::class, 'clearCart']);
             Route::delete('/{cartItem}', [CartController::class, 'removeItemCart']);
             Route::put('/{cartItem}', [CartController::class, 'updateCartItem']);
+        });
+
+        // Order
+        Route::prefix('orders')->group(function () {
+            Route::get('/', [OrderController::class, 'index']);
+            Route::get('/{reference}', [OrderController::class, 'show']);
         });
 
     });
