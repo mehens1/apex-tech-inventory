@@ -25,6 +25,14 @@
                                 dashboard
                             </p>
 
+                            @if (session('error'))
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        <li>{{ session('error') }}</li>
+                                    </ul>
+                                </div>
+                            @endif
+
                             @if ($errors->any())
                                 <div class="alert alert-danger">
                                     <ul>
