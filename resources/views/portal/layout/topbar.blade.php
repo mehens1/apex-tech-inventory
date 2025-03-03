@@ -158,12 +158,12 @@
             <a href="javascript:void(0)" class="user-link  nav-link" data-bs-toggle="dropdown">
                 <span class="user-img">
                     <img src="{{ asset('assets/img/user_placeholder.jpg') }}"
-                        alt="{{ $user->firstName . ' ' . $user->lastName }}" class="profilesidebar">
+                        alt="{{ auth()->user()->firstName . ' ' . auth()->user()->lastName }}" class="profilesidebar">
                     <span class="animate-circle"></span>
                 </span>
                 <span class="user-content">
-                    <span class="user-name">{{ $user->firstName . ' ' . $user->lastName }}</span>
-                    <span class="user-details">{{ $user->role->name }}</span>
+                    <span class="user-name">{{ auth()->user()->firstName . ' ' . auth()->user()->lastName }}</span>
+                    <span class="user-details">{{ auth()->user()->role->name }}</span>
                 </span>
             </a>
             <div class="dropdown-menu menu-drop-user">

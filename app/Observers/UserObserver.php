@@ -3,7 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
-use App\Model\Order;
+use App\Models\Order; 
 
 class UserObserver
 {

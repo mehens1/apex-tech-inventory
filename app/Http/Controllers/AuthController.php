@@ -35,6 +35,8 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Unauthorized login for customers']);
         }
 
+        logger('Session ID before error flash: ' . session()->getId());
+
         return back()->withErrors(['email' => 'Invalid credentials']);
     }
 
@@ -47,5 +49,6 @@ class AuthController extends Controller
         Auth::logout();
         return redirect()->route('login');
     }
+
 
 }
