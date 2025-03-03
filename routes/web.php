@@ -7,17 +7,21 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
 // Web Authentication
-Route::get('/login', [AuthController::class, 'loginPage'])->name('login');
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::middleware('web')->group(function () {
+    Route::get('/login', [AuthController::class, 'loginPage'])->name('login');
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+});
 
-Route::prefix('inventory')->middleware(['auth'])->group(function () {
+// Fix 1: Changed middleware order to ['web', 'auth']
+Route::prefix('inventory')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', function () {
         return redirect()->route('dashboard');
     });
@@ -49,13 +53,21 @@ Route::prefix('inventory')->middleware(['auth'])->group(function () {
     });
 });
 
-
-Route::prefix('customer')->middleware(['auth'])->group(function () {
+// Fix 2: Removed duplicate web middleware and fixed redirect
+Route::prefix('customer')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', function () {
-        return redirect()->route('customer');
+        return redirect()->route('customer.list');
     });
 
     Route::get('/list', [CustomerController::class, 'allCustomer'])->name('customer.list');
     Route::get('/orders', [CustomerController::class, 'customerOrders'])->name('customer.orders');
     Route::get('/order/{order}', [CustomerController::class, 'customerOrderDetails'])->name('customer.order');
+});
+
+// Fix 3: Fixed users route group conflicts
+Route::prefix('users')->middleware(['web', 'auth'])->group(function () {
+    // Removed conflicting redirect
+    Route::get('/', [UserController::class, 'index'])->name('users');
+    Route::get('/new', [UserController::class, 'create'])->name('newUser');
+    Route::post('/create', [UserController::class, 'store'])->name('storeUser');
 });

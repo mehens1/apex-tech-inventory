@@ -32,6 +32,16 @@
                     </ul>
                 </li>
 
+                <!-- User -->
+                <li class="menu-title"><span>User</span></li>
+                <li class="submenu">
+                    <a href="#"><i class="fe fe-package"></i> <span>Users</span> <span
+                            class="menu-arrow"></span></a>
+                    <ul style="display: none;">
+                        <li><a href="{{ route('users') }}">User List</a></li>
+                    </ul>
+                </li>
+
                 <!-- Settings -->
                 <li class="menu-title"><span>Settings</span></li>
                 <li>
