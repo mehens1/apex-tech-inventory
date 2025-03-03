@@ -95,11 +95,11 @@ public function updatePassword(Request $request, $token)
     }
 
     try {
-        $user->update([
-            'password' => Hash::make($validated['new_password']),
-            'password_reset_token' => null,
-            'password_reset_sent_at' => null,
-        ]);
+        $user->password = Hash::make($validated['new_password']);
+        $user->password_reset_token = null;
+        $user->password_reset_sent_at = null;
+        $user->updated_at = now();
+        $user->save();
     } catch (\Exception $e) {
         logger()->error('Password update error: ' . $e->getMessage());
         return redirect()->route('login')->withErrors('Failed to update password');
