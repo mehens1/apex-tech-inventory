@@ -97,7 +97,7 @@ public function updatePassword(Request $request, $token)
     try {
         $user->update([
             'password' => Hash::make($validated['new_password']),
-            'password_reset_token	' => null,
+            'password_reset_token' => null,
             'password_reset_sent_at' => null,
         ]);
     } catch (\Exception $e) {
