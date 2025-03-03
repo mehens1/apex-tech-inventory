@@ -37,7 +37,7 @@ class ForgetPassword
         $user->password_reset_sent_at = now();
         $user->save();
         
-        $resetUrl = url('/api/reset-password?/?token=' . $token);
+        $resetUrl = url('/password-reset/?token=' . $token);
 
         $emailController = new EmailController();
         $emailController->resetpassword($resetUrl, $user->email);

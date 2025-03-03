@@ -18,6 +18,8 @@ Route::middleware('web')->group(function () {
     Route::get('/login', [AuthController::class, 'loginPage'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+    Route::get('/password-reset', [AuthController::class, 'updatePasswordPage'])->name('password-reset');
+    Route::post('/password-reset/{token}', [AuthController::class, 'updatePassword'])->name('password.update');
 });
 
 // Fix 1: Changed middleware order to ['web', 'auth']

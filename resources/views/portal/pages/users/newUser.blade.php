@@ -66,14 +66,6 @@
 
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
-                                        <label>Password <span class="text-danger"> *</span></label>
-                                        <input type="password" class="form-control" name="password"
-                                            placeholder="Enter Password">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6 col-sm-12">
-                                    <div class="input-block mb-3">
                                         <label>Role <span class="text-danger"> *</span></label>
                                         <select class="form-control" name="role_id">
     <option value="" disabled>Select Role</option>
