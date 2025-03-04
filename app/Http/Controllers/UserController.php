@@ -47,9 +47,10 @@ class UserController extends Controller
              'lastName' => 'required|string|max:255',
              'email' => 'required|email|unique:users',
              'phone' => 'required|string|max:255',
-             'password' => 'required|min:8',
              'role_id' => 'required|exists:roles,id',
          ]);
+
+         $pass = 'password';
      
          try {
              // Create user with mass assignment
@@ -58,7 +59,7 @@ class UserController extends Controller
                  'lastName' => $validatedData['lastName'],
                  'email' => $validatedData['email'],
                  'phone' => $validatedData['phone'],
-                 'password' => Hash::make($validatedData['password']),
+                 'password' => Hash::make($pass),
                  'role_id' => $validatedData['role_id'],
              ]);
          } catch (\Exception $e) {
